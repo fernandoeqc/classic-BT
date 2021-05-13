@@ -5,11 +5,10 @@
 // Debugging switches and macros
 
 
-#include "main.h"
+#include "debug.h"
 
 #include "BluetoothSerial.h"
 #include <SDFunc.h>
-#include <testes.h>
 
 
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)

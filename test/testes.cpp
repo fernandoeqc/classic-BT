@@ -21,8 +21,9 @@ void setup()
 void loop()
 {
     //debugPrints();
-    //clearString();
+    clearString();
     
+    //verificar qual o tamanho da string depois de apagar
     
     
     

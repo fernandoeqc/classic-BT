@@ -42,4 +42,6 @@ void clearString()
     Serial.println(str);
     memset(str, 0, sizeof(str));
     Serial.println(str);
+
+    Serial.println(sizeof(str));
 }

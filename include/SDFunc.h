@@ -10,6 +10,8 @@
 const char escape[TAM_ESCAPE] = {0x12, 0xAA, 0xAA, 0xAA};
 char bufferTmp[TAM_ESCAPE] = {0,0,0,0};
 
+char nameFile[] = "/hello.wav"
+
 char receivedChar;
 boolean newData = false;
 
@@ -22,44 +24,20 @@ void recvOneChar(char bufChar)
     DB_PRINTCH(receivedChar);
 }
 
-
-void cmdController()
+void openFileByName(char * name)
 {
-    static boolean escapuliu = false;
-    static File myFile;
-
-    if (escapuliu)
-    {
-        escapuliu = false;
-
-        switch (receivedChar)
-        {
-        case CMD_START:
-
-            DB_PRINTS("inicio do arquivo");
-            digitalWrite(2, true);
-            myFile = SD.open("/hello.wav", FILE_WRITE);
-            break;
-        case CMD_END:
-            DB_PRINTS("fim do arquivo");
-            digitalWrite(2, false);
-            myFile.close();
-            break;
-        }
-    }
-
-    else if (receivedChar == CMD_ESCAPE)
-    {
-        escapuliu = true;
-        DB_PRINTS("Escapuliu");
-    }
-
-    else if (myFile)
-    {
-        myFile.print(receivedChar);
-    }
+    DB_PRINTS("inicio do arquivo");
+    digitalWrite(2, true);
+    myFile = SD.open(name, FILE_WRITE);
 }
 
+void closeFile()
+{
+    DB_PRINTS("fim do arquivo");
+    digitalWrite(2, false);
+    myFile.close();
+}
+ 
 boolean header(int count)
 {
     if (receivedChar == escape[count])
@@ -93,14 +71,10 @@ void processData()
             switch (receivedChar)
             {
             case CMD_START:
-                DB_PRINTS("inicio do arquivo");
-                digitalWrite(2, true);
-                myFile = SD.open("/hello.wav", FILE_WRITE);
+                openFileByName(nameFile);
                 break;
             case CMD_END:
-                DB_PRINTS("fim do arquivo");
-                digitalWrite(2, false);
-                myFile.close();
+                closeFile();
                 break;
             }
 
