@@ -1,14 +1,11 @@
 
 #include <Arduino.h>
-//#define DEBUG
-
-// Debugging switches and macros
-
+#define DEBUG
 
 #include "debug.h"
 
 #include "BluetoothSerial.h"
-#include <SDFunc.h>
+#include "manage_files.h"
 
 
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
@@ -19,6 +16,7 @@ BluetoothSerial SerialBT;
 
 void setup()
 {
+    pinMode(2, OUTPUT);
     
     Serial.begin(115200);
     while (!Serial)
@@ -44,6 +42,7 @@ void setup()
     deleteFile(SD, "/hello.wav");
     writeFile(SD, "/hello.wav", "Hello ");
 }
+
 
 void loop()
 {

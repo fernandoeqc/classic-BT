@@ -3,12 +3,19 @@
 #include <Arduino.h>
 
 #define DEBUG
-#include "main.h"
+#include "debug.h"
 
+#include <SDFunc.h>
 #include "teste_sd.h"
+
+
+
+
 
 void setup()
 {
+    pinMode(2, OUTPUT);
+
     Serial.begin(115200);
     while (!Serial)
         ;
@@ -36,10 +43,12 @@ void setup()
 
 void loop()
 {
-    //todo
     
     writeBlankStr();
-    
+
+
+
     Serial.println("fim");
     while(1);
 }
+
