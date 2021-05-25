@@ -3,20 +3,23 @@
 #include <SDFunc.h>
 #endif
 
+// #define CMD_START 0x02 //ctrl + b
+// #define CMD_END 0x04   //ctrl + d
+// #define TAM_ESCAPE 4
 
-#define CMD_START 0x02  //ctrl + b
-#define CMD_END 0x04    //ctrl + d
-#define TAM_ESCAPE 4
-const char escape[TAM_ESCAPE] = {0x12, 0x12, 0x12, 0x12}; //ctrl + r
-char bufferTmp[TAM_ESCAPE] = {0, 0, 0, 0};
+#define ESCAPE_CMD 0x12
+#define OPEN_CMD   0x02
+// #define LEN_CMD     
+#define END_CMD    0x05
+#define CLOSE_CMD  0x04
 
-
-char receivedChar;
-boolean newData = false;
+char bufferTmp[] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 char nameFile[] = "/hello.wav";
 
-void recvOneChar(char bufChar)
+
+
+/* void recvOneChar(char bufChar)
 {
     receivedChar = bufChar;
     newData = true;
@@ -30,74 +33,104 @@ void recvOneChar(char bufChar)
         DB_PRINTX(receivedChar);
     }
 }
+ */
 
-
-boolean header(int count)
+boolean header(int count, char byte)
 {
-    if (receivedChar == escape[count])
-    {
-        DB_PRINTS("cont");
-        DB_PRINT(count);
-        bufferTmp[count] = receivedChar;
+    boolean ret = false;
 
+    if (byte == escape[count])
+    {
+        ret = true;
+    }
+
+    bufferTmp[count] = byte;
+
+    if (ret)
         return true;
-    }
     else
-    {
-        memset(bufferTmp, 0, sizeof(bufferTmp));
-        bufferTmp[0] = receivedChar; 
-    }
-
-    DB_PRINTS("bufferTmp:");
-    DB_PRINTS(bufferTmp);
-    return false;
+        return false;
 }
 
 
-void processData()
+// esperando escape
+// escape
+// 
+enum wait_events {WAIT_ESC, WAIT_OPEN, WAIT_LEN, WAIT_END,WAIT_CLOSE};
+void header(char byte)
+{
+    static u_int8_t controller;
+    static bool hasEscape = false;
+
+    switch (controller)
+    {      
+    case WAIT_ESC:
+        if (byte == ESCAPE_FLAG)
+        {
+            hasEscape = true;
+        }
+        openFileW(nameFile);
+        break;
+    }
+}
+
+
+
+
+
+void processData(char byte)
 {
     static boolean b_escapeCorrect = 0;
     static boolean file_open = false;
     static int counterCompare = 0;
 
-    if (newData == true)
+#ifdef DEBUG
+    if (isPrintable(byte))
     {
-        newData = false;
+        DBG_PRINTCH(byte);
+    }
+    else
+    {
+        DBG_PRINTX(byte);
+    }
+#endif
 
-        if (header(counterCompare))
+    if (header(counterCompare, byte))
+    {
+        counterCompare++;
+        if (counterCompare == TAM_ESCAPE)
         {
-            counterCompare++;
-            if (counterCompare == TAM_ESCAPE)
-            {
-                b_escapeCorrect = true;
-                DB_PRINTS("header encontrado");
-            }
+            b_escapeCorrect = true;
+            DBG_PRINTS("header encontrado");
+        }
+        return;
+    }
+
+    if (b_escapeCorrect)
+    {
+        b_escapeCorrect = false;
+
+        switch (byte)
+        {
+        case CMD_START:
+            openFileW(nameFile);
+            file_open = true;
+            break;
+        case CMD_END:
+            closeFile();
+            file_open = false;
+            break;
         }
 
-        else if (b_escapeCorrect)
-        {
-            switch (receivedChar)
-            {
-            case CMD_START:
-                openFileByName(nameFile);
-                file_open = true;
-                break;
-            case CMD_END:
-                closeFile();
-                file_open = false;
-                break;
-            }
-
-            counterCompare = 0;
-            b_escapeCorrect = false;
-        }
-
-        else if (file_open)
-        {
-            printf("ESCREVE:\n");
-            writeStrFile(bufferTmp);
-        }
-    
         memset(bufferTmp, 0, sizeof(bufferTmp));
     }
+
+    else if (file_open)
+    {
+        writeFileW(bufferTmp);
+    }
+
+    // memset(bufferTmp, 0, sizeof(bufferTmp));
+    memset(bufferTmp, 0, counterCompare);
+    counterCompare = 0;
 }

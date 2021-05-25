@@ -1,4 +1,4 @@
-
+/* 
 //#pragma message "achou"
 #include <Arduino.h>
 
@@ -8,9 +8,10 @@
 #include <SDFunc.h>
 #include "teste_sd.h"
 
-
-
-
+File dataFile;
+File dataAudio;
+String ret;
+char bufferBtwFiles[10];
 
 void setup()
 {
@@ -22,7 +23,7 @@ void setup()
     delay(500);
 
     //previne loop de restarts 
-    DB_WAIT_START
+    DBG_WAIT_START
 
     if (!SD.begin())
     {
@@ -37,18 +38,32 @@ void setup()
         return;
     }
 
-    deleteFile(SD, "/teste.txt");
-    writeFile(SD, "/teste.txt", "Teste ");
+    //deleteFile(SD, "/teste.txt");
+    //writeFile(SD, "/hello.wav", "Hello ");
+
+    
+    
+    dataFile = SD.open("/base64.txt");
+    dataAudio = SD.open("/hello.wav");
 }
 
 void loop()
-{
-    
-    writeBlankStr();
+{   
+    ret = readFileStep(SD, "/hello.wav", 3);
+    dataAudio.printf(ret.c_str());
+    Serial.println(ret.c_str());
 
+    if(ret == "")
+    {
+        Serial.println("fim");
+        dataAudio.close();
+        esp_restart();
+    }
+    delay(100);
+ 
+    // readFileStep();
+    // esp_restart();
 
-
-    Serial.println("fim");
-    while(1);
 }
 
+ */

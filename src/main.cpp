@@ -1,6 +1,6 @@
 
 #include <Arduino.h>
-#define DEBUG
+//#define DEBUG
 
 #include "debug.h"
 
@@ -13,6 +13,7 @@
 #endif
 
 BluetoothSerial SerialBT;
+char x = 0;
 
 void setup()
 {
@@ -21,7 +22,7 @@ void setup()
     Serial.begin(115200);
     while (!Serial)
         ;
-    DB_WAIT_START
+    DBG_WAIT_START
     
     SerialBT.begin("esp32teste"); //Bluetooth device name
     Serial.println("The device started, now you can pair it with bluetooth!");
@@ -46,26 +47,13 @@ void setup()
 
 void loop()
 {
-    if (Serial.available())
-    {
-        recvOneChar(Serial.read());
-    }
-    /* 
-    if (Serial.available())
-    {
-        SerialBT.write(Serial.read());
-    }
-    
-  if (SerialBT.available()) {
-    Serial.write(SerialBT.read());
-  } 
-
     if (SerialBT.available())
     {
-        recvOneChar(SerialBT.read());
-    }
-  */
+        processData((char)SerialBT.read());
 
-    processData();
-    //while(1);
+        if(ret == 1)
+        {
+            SerialBT.write(0x06);
+        }
+    }
 }

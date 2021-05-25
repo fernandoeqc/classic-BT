@@ -1,7 +1,7 @@
 
 char filename[] = "/teste.txt";
 char str[] = "texto simples";
-
+/* 
 void writeBlankStr()
 {
     //todo
@@ -20,4 +20,4 @@ void writeBlankStr()
     delay(1000);
     closeFile();
 
-}
+} */

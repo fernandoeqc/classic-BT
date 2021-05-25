@@ -17,7 +17,6 @@
 #include "SD.h"
 #include "SPI.h"
 
-
 void listDir(fs::FS &fs, const char *dirname, uint8_t levels)
 {
     Serial.printf("Listing directory: %s\n", dirname);
@@ -217,4 +216,46 @@ void testFileIO(fs::FS &fs, const char *path)
     end = millis() - start;
     Serial.printf("%u bytes written for %u ms\n", 2048 * 512, end);
     file.close();
+}
+
+
+void readFileStep(fs::FS &fs, const char *path, char step, char * buf)
+{
+    //Serial.printf("Reading file: %s\n", path);
+    static boolean isOpen = 0;
+    static File file;
+    char i;
+
+    if (!isOpen)
+    {
+        file = fs.open(path);
+        if (file)
+        {
+            Serial.print("Read from file: ");
+            #pragma message "retirar isso daqui"
+            buf[0] = 1;
+            isOpen = true;
+        }
+        else
+        {
+            Serial.println("Failed to open file for reading"); 
+            isOpen = false;
+        }
+    }
+
+    else
+    {
+        for (i = 0; i < step; i++)
+        {
+            if (file.available())
+            {
+               buf[i] = file.read();
+            }
+            else
+            {
+                file.close();
+                isOpen = false;
+            }
+        }
+    }
 }

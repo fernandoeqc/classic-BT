@@ -3,12 +3,17 @@
 #include <cstring>
 #include <time.h>
 
-
 #define boolean bool
 
-
-#define digitalWrite(x, y) { printf("pin %d %d\n", x, y); }
-
+void digitalWrite(int pin, boolean state) {     
+    printf("pin %d, state: ", pin); 
+    if(state) {
+        printf("TRUE\n");
+    }
+    else {
+        printf("FALSE\n");
+    }
+}
 
 boolean isPrintable(char x) {
     if( (x >= 32) && (x <= 126) ) {
