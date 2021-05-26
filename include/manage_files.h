@@ -1,4 +1,3 @@
-
 #ifndef NATIVE
 #include <SDFunc.h>
 #endif
@@ -7,15 +6,19 @@
 // #define CMD_END 0x04   //ctrl + d
 // #define TAM_ESCAPE 4
 
-#define ESCAPE_CMD 0x12
-#define OPEN_CMD   0x02
-// #define LEN_CMD     
-#define END_CMD    0x05
-#define CLOSE_CMD  0x04
+#define ESCAPE_CMD  0x12 // ^R
+#define OPEN_CMD    0x02 // ^B
+#define CLOSE_CMD   0x04 // ^D
+#define END_CMD     0x17 // ^W
+#define OK_CMD      0x06 // ^F
+#define FAIL_CMD    0x15 // ^u
 
-char bufferTmp[] = {0, 0, 0, 0, 0, 0, 0, 0};
 
-char nameFile[] = "/hello.wav";
+enum tasks {RECEIVE_APK_TASK, SEND_APK_TASK, COMMANDS_TASK, RECEIVE_RADIO_TASK, SEND_RADIO_TASK};
+
+#pragma message "SEPARAR TASKS, SEPARAR ESCRITA EM ARQUIVO, ENVIO DE Audio e RECEBIMENTO DE COMANDOS EM TASKS SEPARADAS, NO MAIN"
+
+char fileName[] = "/hello.wav";
 
 
 
@@ -33,7 +36,6 @@ char nameFile[] = "/hello.wav";
         DB_PRINTX(receivedChar);
     }
 }
- */
 
 boolean header(int count, char byte)
 {
@@ -51,31 +53,114 @@ boolean header(int count, char byte)
     else
         return false;
 }
+ */
 
 
 // esperando escape
 // escape
 // 
-enum wait_events {WAIT_ESC, WAIT_OPEN, WAIT_LEN, WAIT_END,WAIT_CLOSE};
-void header(char byte)
+
+
+bool processData(char byte)
+{
+
+
+}
+
+enum wait_events {WAIT_ESC, WAIT_CMD, WAIT_LEN, WAIT_BUF, WAIT_END,WAIT_CLOSE};
+bool escape(char byte)
 {
     static u_int8_t controller;
-    static bool hasEscape = false;
+    static u_int8_t lenght_buffer;
+    static u_int8_t index = 0;
+    static char buffer_tmp[50];
 
     switch (controller)
     {      
     case WAIT_ESC:
-        if (byte == ESCAPE_FLAG)
+        if (byte == ESCAPE_CMD)
         {
-            hasEscape = true;
+            DBG_PRINTS("ESCAPE\n");
+            controller = WAIT_CMD;
         }
-        openFileW(nameFile);
         break;
+    
+    case WAIT_CMD:
+        controller = WAIT_ESC;
+        if (byte == OPEN_CMD)
+        {
+            openFileW(fileName);
+            controller = WAIT_LEN;
+            DBG_PRINTS("file open\n");
+            return RECEIVE_APK_TASK;
+        }
+        break;
+    
+
+
+
+
+
+
+
+
+
+
+
+
+    case WAIT_LEN:
+        DBG_PRINTS("len\n");
+        lenght_buffer = byte;
+        controller = WAIT_BUF;
+        break;
+
+    case WAIT_BUF:
+        DBG_PRINTS("buf: ");
+        DBG_PRINTCH(byte);
+
+        buffer_tmp[index] = byte;
+        
+        index++;
+        if (index == lenght_buffer)
+        {
+            index = 0;
+            controller = WAIT_END;
+        }
+        break;
+
+    case WAIT_END:
+        if ((byte == END_CMD) || (byte == CLOSE_CMD))
+        {
+            writeOnFile(buffer_tmp, lenght_buffer);
+            
+            if (byte == END_CMD)
+            {
+                controller = WAIT_LEN;
+            }
+            else
+            {
+                controller = WAIT_ESC;
+                closeFile();
+            }
+            answer(OK_CMD);
+
+            DBG_PRINTS("end\n");    
+        }
+        else
+        {
+            answer(FAIL_CMD);
+            controller = WAIT_ESC;
+            DBG_PRINTS("fail end\n");    
+        }
+        break;
+
+    default:
+        controller = WAIT_ESC;
     }
 }
 
-
-
+  
+/* 
 
 
 void processData(char byte)
@@ -113,7 +198,7 @@ void processData(char byte)
         switch (byte)
         {
         case CMD_START:
-            openFileW(nameFile);
+            openFileW(fileName);
             file_open = true;
             break;
         case CMD_END:
@@ -134,3 +219,4 @@ void processData(char byte)
     memset(bufferTmp, 0, counterCompare);
     counterCompare = 0;
 }
+ */
