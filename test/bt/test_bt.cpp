@@ -44,8 +44,8 @@ void setup()
 
 void loop()
 {
-    if (Serial.available())
+    if (SerialBT.available())
     {
-        processData(Serial.read());
+        processData(SerialBT.read());
     }    
 }

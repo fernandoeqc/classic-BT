@@ -20,9 +20,10 @@ void func(char *buf, size_t count)
 
 void writeOnFile(char *myData)
 {
-    printf("write { %lu }\n", myData);
-    printf("write { %lu }\n", &myData+1);
-    printf("write { %lu }\n", &myData);
+    for (int i = 0; i < 5; i++)
+    {
+        printf("write { 0x%02x }\n", myData[i]);
+    }
 }
 
 

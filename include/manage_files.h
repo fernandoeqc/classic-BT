@@ -14,9 +14,10 @@
 #define OK_CMD          0x06   // ^F
 #define FAIL_CMD        0x15   // ^u
 
-char fileName[] = "/hello.wav";
+
 bool file_open = false;
 static char buffer_tmp[50];
+
 
 enum tasks
 {
@@ -33,7 +34,7 @@ uint8_t commands()
 
     if (buffer_tmp[0] == OPEN_CMD)
     {
-        openFileW(fileName);
+        openFileW();
         DBG_PRINTS("\nfile open\n");
         has_open_file = true;
         return OK_CMD;
@@ -51,8 +52,8 @@ uint8_t commands()
     {
         if(has_open_file)
         {
-            writeOnFile(buffer_tmp);
-            DBG_PRINTS(buffer_tmp);
+            writeOnFile(&buffer_tmp[1]);
+            DBG_PRINTS(&buffer_tmp[1]);
             return OK_CMD;
         }
     }
@@ -60,7 +61,11 @@ uint8_t commands()
    
     return FAIL_CMD;
 }
-
+/* 
+    concatena  os bytes recebidos no buffer_tmp até encontrar
+    o escape. quando recebe, exclui o caractere de escape,
+    envia o buffer para commands() e zera o index do buffer.
+*/
 void processData(char byte)
 {
     static uint8_t index = 0;

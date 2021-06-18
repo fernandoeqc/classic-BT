@@ -43,7 +43,7 @@ void loop()
     {
         if(Serial.read() == 'a')
         {
-            readFile(SD, "/hello.txt");
+            readFile(SD, "/hello.wav");
         }
     }
 }
