@@ -1,69 +1,53 @@
-/* 
-//#pragma message "achou"
-#include <Arduino.h>
+#define DBG
 
-#define DEBUG
+#include "project_defines.h"
+#include "Arduino.h"
 #include "debug.h"
-
-#include <SDFunc.h>
 #include "teste_sd.h"
+#include <SDFunc.h>
+#include <manage_files.h>
 
-File dataFile;
-File dataAudio;
-String ret;
-char bufferBtwFiles[10];
+
+char namefile[] = "test.txt";
+
+char test_buffer[] = {97, 98, 99, 100, 101, 102, 103, 104, 105, 106, '\0'};
+
+uint8_t test[] = {1, 2, 3, 4, 5};
 
 void setup()
 {
-    pinMode(2, OUTPUT);
-
-    Serial.begin(115200);
+    Serial.begin(BAUD);
     while (!Serial)
-        ;
-    delay(500);
-
-    //previne loop de restarts 
-    DBG_WAIT_START
-
-    if (!SD.begin())
     {
-        Serial.println("Card Mount Failed");
-        while (1);
     }
-    
-    uint8_t cardType = SD.cardType();
-    if (cardType == CARD_NONE)
-    {
-        Serial.println("No SD card attached");
-        return;
-    }
+    DBG_WAIT_START();
+    delay(400); // catch Due reset problem
 
-    //deleteFile(SD, "/teste.txt");
-    //writeFile(SD, "/hello.wav", "Hello ");
-
-    
-    
-    dataFile = SD.open("/base64.txt");
-    dataAudio = SD.open("/hello.wav");
+    initSD();
+    Serial.println("fim do setup");
 }
 
-void loop()
-{   
-    ret = readFileStep(SD, "/hello.wav", 3);
-    dataAudio.printf(ret.c_str());
-    Serial.println(ret.c_str());
+void tempoEscrita()
+{
+     int tempo = 0;
+    //readFile(SD, "/test.txt");
+    tempo = millis();
 
-    if(ret == "")
+    copypaste(SD, "/copy.txt", "/paste.txt");
+    Serial.println(millis() - tempo);
+} 
+
+void loop()
+{
+   
+    /* if(Serial.available())
     {
-        Serial.println("fim");
-        dataAudio.close();
-        esp_restart();
-    }
-    delay(100);
- 
-    // readFileStep();
+        processData(Serial.read());
+        // Serial.print(Serial.read());
+    } */
+
+    // Serial.printf("fim\n");
+    // Serial.println("\n\n\n");
     // esp_restart();
 
 }
-
- */

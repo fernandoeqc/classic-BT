@@ -1,10 +1,11 @@
+#define DBG
 
 #include <Arduino.h>
-#define DEBUG
-
-#include "debug.h"
-
+#include "test_bt.h"
+#include <project_defines.h>
 #include "BluetoothSerial.h"
+#include "debug.h"
+#include "manage_files.h"
 
 
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
@@ -13,38 +14,38 @@
 
 BluetoothSerial SerialBT;
 
-char tm = 0;
+int inteiro = 0;
+void contador ()
+{
+    Serial.printf("Enviando %c, 0x%x\n", inteiro, inteiro);
+    SerialBT.write(inteiro);
+    delay(200);
+    if(inteiro == 255)
+    {
+        inteiro = 0;
+    }
+    inteiro++;
+}
 
 void setup()
 {
     pinMode(2, OUTPUT);
     
-    Serial.begin(115200);     
+    Serial.begin(BAUD);     
         ;
 
     //DBG_WAIT_START
     
-    SerialBT.begin("esp32apk"); //Bluetooth device name
+    SerialBT.begin("esp32test"); //Bluetooth device name
     Serial.println("The device started, now you can pair it with bluetooth!");
-
-    tm = 0;
 
 }
 
-int inteiro = 0;
+
 void loop()
 {
-
-    if (SerialBT.available())
+    if (Serial.available())
     {
-        tm = (char)SerialBT.read();
-        /* if (isPrintable(tm))
-        {
-            DBG_PRINTCH(tm);
-        }
-        else
-        {
-            DBG_PRINTX(tm);
-        } */
-    } 
+        processData(Serial.read());
+    }    
 }

@@ -4,6 +4,7 @@
 #include <time.h>
 
 #define boolean bool
+// #define uint8_t u_int8_t
 
 void digitalWrite(int pin, boolean state) {     
     printf("pin %d, state: ", pin); 

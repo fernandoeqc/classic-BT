@@ -1,23 +1,9 @@
 
 char filename[] = "/teste.txt";
 char str[] = "texto simples";
-/* 
-void writeBlankStr()
+
+void answer(uint8_t resp)
 {
-    //todo
-    
-    openFileByName(filename);
-    
-    writeStrFile(str);
-    delay(100);
-
-    memset(str, 0, sizeof(str));
-
-    writeStrFile(str);
-    delay(100);
-
-        
-    delay(1000);
-    closeFile();
-
-} */
+    Serial.printf("\nans ");
+    Serial.println(resp);
+}

@@ -13,9 +13,61 @@
  *    D1       -
  */
 
+// HSPI
+/* #define SCK 14
+#define MISO 12
+#define MOSI 13
+#define CS 15 */
+
+// VSPI
+#define SCK 18
+#define MISO 19
+#define MOSI 23
+#define CS 5
+
 #include "FS.h"
 #include "SD.h"
 #include "SPI.h"
+
+SPIClass spi;
+// Initialize SD card
+void initSD()
+{
+    spi = SPIClass(VSPI);
+    spi.begin(SCK, MISO, MOSI, CS);
+
+    if (!SD.begin(CS, spi, 80000000)) // 2005
+    {
+        Serial.println("Card Mount Failed");
+        return;
+    }
+    uint8_t cardType = SD.cardType();
+
+    if (cardType == CARD_NONE)
+    {
+        Serial.println("No SD card attached");
+        return;
+    }
+    Serial.print("SD Card Type: ");
+    if (cardType == CARD_MMC)
+    {
+        Serial.println("MMC");
+    }
+    else if (cardType == CARD_SD)
+    {
+        Serial.println("SDSC");
+    }
+    else if (cardType == CARD_SDHC)
+    {
+        Serial.println("SDHC");
+    }
+    else
+    {
+        Serial.println("UNKNOWN");
+    }
+    uint64_t cardSize = SD.cardSize() / (1024 * 1024);
+    Serial.printf("SD Card Size: %lluMB\n", cardSize);
+}
 
 void listDir(fs::FS &fs, const char *dirname, uint8_t levels)
 {
@@ -100,6 +152,30 @@ void readFile(fs::FS &fs, const char *path)
     }
     file.close();
 }
+
+void copypaste(fs::FS &fs, const char *cp, const char *pt)
+{
+    File copy = fs.open(cp, FILE_READ);
+    File paste = fs.open(pt, FILE_WRITE);
+
+    if (!copy || !paste)
+    {
+        Serial.println("Failed to open one thoses files");
+        return;    
+    }
+    
+    Serial.print("Read from file:  \n\n\n");
+    while (copy.available())
+    {
+        //Serial.print('.');
+        //delay(1);
+        paste.write(copy.read());
+        
+    }
+    copy.close();
+    paste.close();
+}
+
 
 void writeFile(fs::FS &fs, const char *path, const char *message)
 {
@@ -218,8 +294,7 @@ void testFileIO(fs::FS &fs, const char *path)
     file.close();
 }
 
-
-void readFileStep(fs::FS &fs, const char *path, char step, char * buf)
+void readFileStep(fs::FS &fs, const char *path, char step, char *buf)
 {
     //Serial.printf("Reading file: %s\n", path);
     static boolean isOpen = 0;
@@ -232,13 +307,13 @@ void readFileStep(fs::FS &fs, const char *path, char step, char * buf)
         if (file)
         {
             Serial.print("Read from file: ");
-            #pragma message "retirar isso daqui"
+#pragma message "retirar isso daqui"
             buf[0] = 1;
             isOpen = true;
         }
         else
         {
-            Serial.println("Failed to open file for reading"); 
+            Serial.println("Failed to open file for reading");
             isOpen = false;
         }
     }
@@ -249,7 +324,7 @@ void readFileStep(fs::FS &fs, const char *path, char step, char * buf)
         {
             if (file.available())
             {
-               buf[i] = file.read();
+                buf[i] = file.read();
             }
             else
             {
