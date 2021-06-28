@@ -1,5 +1,5 @@
 
-void openFileW(char name[])
+void openFileW()
 {
     Serial.println("abriu o arq");
 }

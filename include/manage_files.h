@@ -16,7 +16,7 @@
 
 
 bool file_open = false;
-static char buffer_tmp[50];
+static char buffer_tmp[250];
 
 
 enum tasks
@@ -37,6 +37,7 @@ uint8_t commands()
         openFileW();
         DBG_PRINTS("\nfile open\n");
         has_open_file = true;
+        // digitalWrite(2, true);
         return OK_CMD;
     }
 
@@ -45,6 +46,7 @@ uint8_t commands()
         closeFile();
         DBG_PRINTS("\nfile closed\n");
         has_open_file = false;
+        // digitalWrite(2, false);
         return OK_CMD;
     }
 
@@ -53,12 +55,11 @@ uint8_t commands()
         if(has_open_file)
         {
             writeOnFile(&buffer_tmp[1]);
-            DBG_PRINTS(&buffer_tmp[1]);
+            // DBG_PRINTS(&buffer_tmp[1]);
             return OK_CMD;
         }
     }
 
-   
     return FAIL_CMD;
 }
 /* 
@@ -70,15 +71,17 @@ void processData(char byte)
 {
     static uint8_t index = 0;
 
-    DBG_PRINTX(byte);
+    // DBG_PRINTX(byte);
 
     buffer_tmp[index] = byte;
     index++;
 
     if(byte == ESCAPE_CMD)
     {
+        digitalWrite(2, true);
         buffer_tmp[index-1] = 0;
         answer(commands());
         index = 0;
-    }
+        digitalWrite(2, false);
+    }    
 }

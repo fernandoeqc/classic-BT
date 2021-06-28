@@ -1,5 +1,5 @@
 
-#include <Arduino.h>
+#include "Arduino.h"
 #define DBG
 
 #include "debug.h"
@@ -21,11 +21,11 @@ void setup()
     pinMode(2, OUTPUT);
     
     Serial.begin(BAUD);
-    while (!Serial)
+        while (!Serial)
         ;
     DBG_WAIT_START();
     
-    SerialBT.begin("esp32teste"); //Bluetooth device name
+    SerialBT.begin("ESP32test"); //Bluetooth device name
     Serial.println("The device started, now you can pair it with bluetooth!");
 
     initSD();

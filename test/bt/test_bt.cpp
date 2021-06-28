@@ -36,16 +36,56 @@ void setup()
 
     //DBG_WAIT_START
     
-    SerialBT.begin("esp32test"); //Bluetooth device name
+    SerialBT.begin(BT_NAME_CLASSIC); //Bluetooth device name
     Serial.println("The device started, now you can pair it with bluetooth!");
 
 }
 
+uint8_t ui = 0x06;
+char ch = 0x06;
+unsigned char uch= 0x06;
 
 void loop()
 {
-    if (SerialBT.available())
+    /* if (SerialBT.available())
     {
         processData(SerialBT.read());
-    }    
+    } */
+    
+    if (Serial.available())
+    {
+        char rd = Serial.read();
+        if (rd == 'a')
+        {
+            Serial.println("envia 'a'");
+            SerialBT.write('a');
+        }
+        if (rd == 'b')
+        {
+            Serial.println("envia '|n'");
+            SerialBT.write('\n');
+        }
+        if (rd == 'c')
+        {
+            Serial.println("envia '0x0a'");
+            SerialBT.write(0x0a);
+        }
+        if (rd == 'd')
+        {
+            Serial.println("envia 'uint_8' 0x06");
+            SerialBT.write(ui);
+        }
+        if (rd == 'e')
+        {
+            Serial.println("envia 'char' 0x06");
+            SerialBT.write(ch);
+        }
+        if (rd == 'f')
+        {
+            Serial.println("envia 'unsigned char' 0x06");
+            SerialBT.write(uch);
+        }
+    }
+
+
 }

@@ -19,7 +19,7 @@ void openFileW()
     if(myFile)
     {
         DBG_PRINTS("inicio do arquivo\n");
-        digitalWrite(2, true);
+        
     }
 }
 
@@ -35,7 +35,7 @@ void writeOnFile(char *myData)
 void closeFile()
 {
     myFile.close();
-    digitalWrite(2, false);
+    
     DBG_PRINTS("fim do arquivo\n");
 }
 
