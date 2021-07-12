@@ -4,7 +4,7 @@
 #include "test_bt.h"
 #include <project_defines.h>
 #include "BluetoothSerial.h"
-#include "debug.h"
+#include "dbg.h"
 #include "manage_files.h"
 
 

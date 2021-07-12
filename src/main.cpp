@@ -2,8 +2,9 @@
 #include "Arduino.h"
 #define DBG
 
-#include "debug.h"
+#include "dbg.h"
 #include "project_defines.h"
+
 #include "SDFunc.h"
 #include "BTFunc.h"
 #include "manage_files.h"
@@ -12,7 +13,6 @@
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
 #endif
-
 
 char x = 0;
 

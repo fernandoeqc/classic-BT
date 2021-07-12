@@ -1,22 +1,23 @@
 #include "sd.h"
-File myFile;
-char fileName[] = "/hello.wav";
+File myFileR;
+File myFileW;
+// char fileName[] = "/hello.wav";
 
-void openFileR()
+void openFileR(const char * fileName)
 {
     
-    myFile = SD.open(fileName, FILE_READ);
-    if(myFile)
+    myFileR = SD.open(fileName, FILE_READ);
+    if(myFileR)
     {
         DBG_PRINTS("leitura do arquivo\n");
     }
     //digitalWrite(2, true);
 }
 
-void openFileW()
+void openFileW(const char *fileName)
 {
-    myFile = SD.open(fileName, FILE_WRITE);
-    if(myFile)
+    myFileW = SD.open(fileName, FILE_WRITE);
+    if(myFileW)
     {
         DBG_PRINTS("inicio do arquivo\n");
         
@@ -25,7 +26,7 @@ void openFileW()
 
 void writeOnFile(char *myData)
 {
-    myFile.print(myData);
+    myFileW.print(myData);
     /* Serial.printf("\nmem %u\n", myData);
     Serial.printf("\nval %u\n", *myData);
     Serial.printf("\nmem+1 %lu\n", myData+1);
@@ -34,26 +35,26 @@ void writeOnFile(char *myData)
 
 void closeFile()
 {
-    myFile.close();
+    
     
     DBG_PRINTS("fim do arquivo\n");
 }
 
-void readFile()
+void readFile(const char *fileName)
 {
     Serial.printf("Reading file \n");
 
-    myFile = SD.open(fileName, FILE_READ);
-    if (!myFile)
+    myFileR = SD.open(fileName, FILE_READ);
+    if (!myFileR)
     {
         Serial.println("Failed to open file for reading");
         return;
     }
 
     Serial.print("Read from file: ");
-    while (myFile.available())
+    while (myFileR.available())
     {
-        Serial.write(myFile.read());
+        Serial.write(myFileR.read());
     }
-    myFile.close();
+    myFileR.close();
 }

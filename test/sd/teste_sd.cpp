@@ -1,17 +1,18 @@
 #define DBG
 
-#include "project_defines.h"
 #include "Arduino.h"
-#include "debug.h"
+
+/* DEBUGS ================================*/
+#include "dbg.h"
+#include "project_defines.h"
 #include "teste_sd.h"
+
 #include <SDFunc.h>
 #include <manage_files.h>
-
+/* =======================================*/
 
 char namefile[] = "test.txt";
-
 char test_buffer[] = {97, 98, 99, 100, 101, 102, 103, 104, 105, 106, '\0'};
-
 uint8_t test[] = {1, 2, 3, 4, 5};
 
 void setup()
@@ -37,9 +38,11 @@ void tempoEscrita()
     Serial.println(millis() - tempo);
 } 
 
+
 void loop()
 {
    
+    parseFile();
     /* if(Serial.available())
     {
         processData(Serial.read());
@@ -48,6 +51,6 @@ void loop()
 
     // Serial.printf("fim\n");
     // Serial.println("\n\n\n");
-    // esp_restart();
 
+    esp_restart();
 }

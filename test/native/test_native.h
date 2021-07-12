@@ -1,5 +1,5 @@
 
-#define openFileW(x) { printf("arquivo %s aberto \n", x); }
+#define openFileW() { printf("arquivo aberto \n"); }
 #define closeFile() { printf("arquivo fechado \n"); }
 
 void testeBuf(char * buf)

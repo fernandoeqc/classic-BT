@@ -1,0 +1,3 @@
+Microchip Technology offers support and resources to educators, 
+researchers and students in an effort to increase awareness and 
+knowledge of embedded applications. Support includes access to labs
